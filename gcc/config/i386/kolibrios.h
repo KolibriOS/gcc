@@ -52,8 +52,8 @@ along with GCC; see the file COPYING3.  If not see
   %{mconsole:--subsystem console} \
   %{shared: %{mdll: %eshared and mdll are not compatible}} \
   %{shared: --shared} %{mdll: --dll} \
-  %{shared|mdll: -Tdll.lds --entry _DllStartup --enable-auto-image-base -ldll} \
-  %{!shared: %{!mdll: -Bstatic -Tapp-dynamic.lds --image-base=0 }} "
+  %{shared|mdll: -Tkos-pedll.lds -s --entry _DllStartup --image-base=0 -ldll} \
+  %{!shared: %{!mdll: -Bstatic -s -Tkos-app-dyn.lds --image-base=0 --file-alignment=16 --section-alignment=16 }} "
 
 #undef REAL_LIBGCC_SPEC
 #define REAL_LIBGCC_SPEC LIBGCC_SPEC
@@ -66,8 +66,17 @@ along with GCC; see the file COPYING3.  If not see
 #undef ENDFILE_SPEC
 #define ENDFILE_SPEC ""
 
+/* Running objcopy for KolibriOS applications */
+#undef POST_LINK_SPEC
+#define POST_LINK_SPEC "%{!shared: %{!mdll: i586-kos-mingw32-objcopy -Obinary %{o*:%*} %{!o*:a.exe} }}"
+
+/* Native header directory */
 #undef NATIVE_SYSTEM_HEADER_DIR
 #define NATIVE_SYSTEM_HEADER_DIR "/include"
+
+/* Don't use ".exe" suffix by default */
+#undef TARGET_EXECUTABLE_SUFFIX
+#define TARGET_EXECUTABLE_SUFFIX ""
 
 /* Define as short unsigned for compatibility */
 #undef WINT_TYPE
