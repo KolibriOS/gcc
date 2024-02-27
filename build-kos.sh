@@ -5,15 +5,18 @@
 
 set -e
 
-TARGET=i586-kos-mingw32
+TARGET=i586-kolibrios
 KOS_SDK=/opt/kolibrios-sdk
 
-./configure --target=$TARGET \
-            --prefix=$KOS_SDK/toolchain \
-            --with-sysroot=$KOS_SDK/sysroot \
-            --disable-nls \
-            --enable-shared \
-            --enable-languages=c,c++
+mkdir -p kos-build
+cd kos-build
+
+../configure --target=$TARGET \
+             --prefix=$KOS_SDK/toolchain \
+             --with-sysroot=$KOS_SDK/sysroot \
+             --disable-nls \
+             --enable-shared \
+             --enable-languages=c,c++ \
+             --disable-threads
 
 make -j8 all-gcc
-

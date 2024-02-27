@@ -16,35 +16,30 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with GCC; see the file COPYING3.  If not see
-<http://www.gnu.org/licenses/>.  */
+<http://www.gnu.org/licenses/>.
 
-#undef DEFAULT_ABI
-#define DEFAULT_ABI MS_ABI
+Copyright (C) KolibriOS team 2024. All rights reserved.
+Distributed under terms of the GNU General Public License */
 
-/* By default, target has a 80387, uses IEEE compatible arithmetic,
-   and returns float values in the 387.  */
-#undef TARGET_SUBTARGET_DEFAULT
-#define TARGET_SUBTARGET_DEFAULT \
-	(MASK_80387 | MASK_IEEE_FP | MASK_FLOAT_RETURNS)
-
-/* See i386/crtdll.h for an alternative definition. _INTEGRAL_MAX_BITS
-   is for compatibility with native compiler.  */
-#define EXTRA_OS_CPP_BUILTINS()					\
-  do								\
-    {								\
-      builtin_define ("__KOS__");			   	\
-      builtin_define ("_KOLIBRI");				\
-      builtin_define ("KOLIBRI");				\
-      builtin_define_std ("KOLIBRIOS");				\
-      builtin_define_with_int_value ("_INTEGRAL_MAX_BITS",	\
-				     TYPE_PRECISION (intmax_type_node));\
-    }				\
+/* Additional predefined macros. */
+#define EXTRA_OS_CPP_BUILTINS() \
+  do  \
+    { \
+      builtin_define ("__KOS__");           \
+      builtin_define ("__KOLIBRIOS__");     \
+      builtin_define ("_KOLIBRI");          \
+      builtin_define ("KOLIBRI");           \
+    }                                       \
   while (0)
 
+/* Always link libgcc */
 #undef LIBGCC_SPEC
 #define LIBGCC_SPEC "-lgcc"
 
-/* For KolibriOS applications always include lc.dll */
+#undef REAL_LIBGCC_SPEC
+#define REAL_LIBGCC_SPEC LIBGCC_SPEC
+
+/* For KolibriOS applications always link libc.dll.a */
 #undef LIB_SPEC
 #define LIB_SPEC "-lc.dll"
 
@@ -54,9 +49,6 @@ along with GCC; see the file COPYING3.  If not see
   %{shared: --shared} %{mdll: --dll} \
   %{shared|mdll: -Tkos-pedll.lds -s --entry _DllStartup --image-base=0 -ldll} \
   %{!shared: %{!mdll: -Bstatic -s -Tkos-app-dyn.lds --image-base=0 --file-alignment=16 --section-alignment=16 }} "
-
-#undef REAL_LIBGCC_SPEC
-#define REAL_LIBGCC_SPEC LIBGCC_SPEC
 
 /* Stub! Start file not used. */
 #undef STARTFILE_SPEC
@@ -68,24 +60,18 @@ along with GCC; see the file COPYING3.  If not see
 
 /* Running objcopy for KolibriOS applications */
 #undef POST_LINK_SPEC
-#define POST_LINK_SPEC "%{!shared: %{!mdll: i586-kos-mingw32-objcopy -Obinary %{o*:%*} %{!o*:a.exe} }}"
+#define POST_LINK_SPEC "%{!shared: %{!mdll: i586-kolibrios-objcopy -Obinary %{o*:%*} %{!o*:a.exe} }}"
 
 /* Native header directory */
 #undef NATIVE_SYSTEM_HEADER_DIR
 #define NATIVE_SYSTEM_HEADER_DIR "/include"
 
-/* Don't use ".exe" suffix by default */
+/* Don't use ".exe" suffix by default for KolibriOS */
 #undef TARGET_EXECUTABLE_SUFFIX
 #define TARGET_EXECUTABLE_SUFFIX ""
-
-/* Define as short unsigned for compatibility */
-#undef WINT_TYPE
-#define WINT_TYPE "short unsigned int"
 
 /* Stub! "-pthread" is not supported for KolibriOS. */
 #undef GOMP_SELF_SPECS
 #define GOMP_SELF_SPECS ""
 #undef GTM_SELF_SPECS
 #define GTM_SELF_SPECS ""
-
-#define HAVE_ENABLE_EXECUTE_STACK
