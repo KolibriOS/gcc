@@ -7,7 +7,7 @@ individual source files for details.
 
 The directory INSTALL contains copies of the installation information
 as HTML and plain text.  The source of this information is
-gcc/doc/install.texi.  The installation information includes details
+gcc/doc/install.text.  The installation information includes details
 of what is included in the GCC sources and what files GCC installs.
 
 See the file gcc/doc/gcc.texi (together with other files that it
